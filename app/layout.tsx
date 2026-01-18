@@ -30,7 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
       >
         <LocaleDetector />
-        <Header />
+        {/* <Header /> */}
         {children}
       </body>
     </html>

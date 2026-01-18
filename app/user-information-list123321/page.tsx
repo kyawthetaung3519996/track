@@ -24,15 +24,6 @@ export default async function Page() {
           >
             {/* Header Section: Name and Email */}
             <div className="flex justify-between items-start mb-6 flex-wrap">
-              <div>
-                <h3 className="text-xl font-semibold tracking-tight">
-                  {user.name}
-                </h3>
-
-                <p className="text-sm text-blue-600 font-medium">
-                  {user.email}
-                </p>
-              </div>
               <div className="text-right flex items-center gap-2">
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                   {user.city || "Unknown Location"}
@@ -75,25 +66,8 @@ export default async function Page() {
                 fieldName="Country Name"
                 fieldValue={user.countryName || ""}
               />
-              <CardItem
-                fieldName="Country Code"
-                fieldValue={user.countryCode || ""}
-              />
-              <CardItem
-                fieldName="Principal Subdivision"
-                fieldValue={user.principalSubdivision || ""}
-              />
-              <CardItem
-                fieldName="Principal Subdivision Code"
-                fieldValue={user.principalSubdivisionCode || ""}
-              />
               <CardItem fieldName="City" fieldValue={user.city || ""} />
               <CardItem fieldName="Locality" fieldValue={user.locality || ""} />
-              <CardItem fieldName="Postcode" fieldValue={user.postcode || ""} />
-              <CardItem
-                fieldName="Plus Code"
-                fieldValue={user.plusCode || ""}
-              />
             </div>
           </div>
         ))}

@@ -28,12 +28,12 @@ export async function POST(request: NextRequest) {
       userAgent,
     } = await request.json();
 
-    if (!latitude || !longitude) {
-      return NextResponse.json(
-        { error: "Latitude and longitude are required" },
-        { status: 400 },
-      );
-    }
+    // if (!latitude || !longitude) {
+    //   return NextResponse.json(
+    //     { error: "Latitude and longitude are required" },
+    //     { status: 400 },
+    //   );
+    // }
     // Create a new user record in the database
     const user = await prisma.user.create({
       data: {
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to create user" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

@@ -1,50 +1,69 @@
 import { ReverseGeocodeData } from "@/components/LocalDetector";
 
-export async function getUserDetails(): Promise<ReverseGeocodeData | null> {
-  if (!("geolocation" in navigator)) {
-    console.warn("Geolocation is not supported by this browser.");
-    return null;
+export async function getUserDetails(): Promise<ReverseGeocodeData> {
+  const ipAddress = await getIPAddress();
+  const userAgent = navigator.userAgent;
+  const browserInfo = getBrowserInfo();
+
+  let locationData: ReverseGeocodeData = {
+    name: null,
+    email: null,
+    latitude: null,
+    longitude: null,
+    lookupSource: null,
+    continent: null,
+    continentCode: null,
+    countryName: null,
+    countryCode: null,
+    principalSubdivision: null,
+    principalSubdivisionCode: null,
+    city: null,
+    locality: null,
+    postcode: null,
+    plusCode: null,
+    localityLanguageRequested: null,
+    userAgent: null,
+    browserName: null,
+    browserVersion: null,
+    ipAddress: null,
+  };
+
+  if ("geolocation" in navigator) {
+    try {
+      const position = await new Promise<GeolocationPosition>(
+        (resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        }
+      );
+
+      const { latitude, longitude } = position.coords;
+
+      const response = await fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+      );
+
+      const data = await response.json();
+
+      locationData = {
+        ...locationData, // keep defaults
+        ...data, // API fields
+        latitude,
+        longitude,
+      };
+    } catch {
+      console.warn("Geolocation denied or failed, using null location.");
+    }
   }
 
-  try {
-    const position = await new Promise<GeolocationPosition>(
-      (resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      },
-    );
-
-    const { latitude, longitude } = position.coords;
-
-    // Get IP address
-    const ipAddress = await getIPAddress();
-
-    // Get user agent and browser info
-    const userAgent = navigator.userAgent;
-    const browserInfo = getBrowserInfo();
-
-    const response = await fetch(
-      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
-    );
-    const data = await response.json();
-
-    console.log("Reverse geocode data:", data);
-    console.log("IP Address:", ipAddress);
-    console.log("User Agent:", userAgent);
-    console.log("Browser:", browserInfo.name, browserInfo.version);
-
-    return {
-      ...data,
-      name: "user" + new Date().getTime(),
-      email: "user" + new Date().getTime() + "@example.com",
-      userAgent,
-      browserName: browserInfo.name,
-      browserVersion: browserInfo.version,
-      ipAddress,
-    };
-  } catch (error) {
-    console.error("Error getting user details:", error);
-    return null;
-  }
+  return {
+    ...locationData,
+    name: "user" + Date.now(),
+    email: "user" + Date.now() + "@example.com",
+    userAgent,
+    browserName: browserInfo.name,
+    browserVersion: browserInfo.version,
+    ipAddress,
+  };
 }
 
 export async function getIPAddress(): Promise<string> {
